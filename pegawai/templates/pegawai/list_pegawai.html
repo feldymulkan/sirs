@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+
+{% block title %}Daftar Pegawai{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="my-4">Daftar Pegawai</h1>
+
+    <!-- Form Pencarian -->
+    <form action="{% url 'list_pegawai' %}" method="GET" class="form-inline mb-4">
+        <div class="input-group w-50">
+            <input 
+                name="q" 
+                type="text" 
+                class="form-control" 
+                placeholder="Cari pegawai..." 
+                value="{{ query|default:'' }}" 
+                aria-label="Cari pegawai"
+            >
+            <div class="input-group-append">
+                <button class="btn btn-primary" type="submit">Cari</button>
+            </div>
+        </div>
+    </form>
+
+    <!-- Tombol Tambah Pegawai -->
+    <div class="mb-3">
+        <a href="{% url 'create_pegawai' %}" class="btn btn-success">Tambah Pegawai</a>
+    </div>
+
+    <!-- Tabel Daftar Pegawai -->
+    <table class="table table-bordered table-striped">
+        <thead class="thead-light">
+            <tr>
+                <th>Nama</th>
+                <th>NIK</th>
+                <th>Jabatan</th>
+                <th>Status</th>
+                <th>Aksi</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if pegawai_list %}
+                {% for pegawai in pegawai_list %}
+                <tr>
+                    <td>{{ pegawai.nama }}</td>
+                    <td>{{ pegawai.nik }}</td>
+                    <td>{{ pegawai.jabatan }}</td>
+                    <td>
+                        {% if pegawai.is_active %}
+                            <span class="text-success">Aktif</span>
+                        {% else %}
+                            <span class="text-danger">Tidak Aktif</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <!-- Tombol Edit -->
+                        <a href="{% url 'edit_pegawai' pegawai.id %}" class="btn btn-warning btn-sm">Edit</a>
+                        
+                        <!-- Tombol Hapus -->
+                        <form action="{% url 'delete_pegawai' pegawai.id %}" method="post" style="display:inline-block;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus pegawai ini?');">
+                                Hapus
+                            </button>
+                        </form>
+                        {% if pegawai.is_active %}
+                            <a href="{% url 'toggle_status' pegawai.id %}" class="btn btn-warning btn-sm">Nonaktifkan</a>
+                        {% else %}
+                            <a href="{% url 'toggle_status' pegawai.id %}" class="btn btn-success btn-sm">Aktifkan</a>
+                        {% endif %}
+                        
+                    </td>
+                </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="5" class="text-center">Tidak ada data pegawai yang ditemukan.</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

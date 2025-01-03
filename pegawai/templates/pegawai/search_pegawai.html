@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}Daftar Pegawai{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <h1 class="my-4">Daftar Pegawai</h1>
+        <form action="{% url "search_pegawai" %}" method="GET">
+            <div class="form-group row">
+                <label for="inputPassword" class="col-sm-2 col-form-label">Search</label>
+                <div class="col-sm-10">
+                  <input  name="q" type="text" class="form-control" id="inputPassword" placeholder="Search">
+                  <button type="submit">Search</button>
+                </div>
+              </div>
+        </form>
+    </div>
+    <a href="{% url 'create_pegawai' %}" class="btn btn-success mb-3">Tambah Pegawai</a>
+    <table class="table table-bordered">
+        <thead class="thead-light">
+            <tr>
+                <th>Nama</th>
+                <th>NIK</th>
+                <th>Jabatan</th>
+                <th>Aksi</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for pegawai in pegawai_list %}
+            <tr>
+                <td>{{ pegawai.nama }}</td>
+                <td>{{ pegawai.nik }}</td>
+                <td>{{ pegawai.jabatan }}</td>
+                <td>
+                    <!-- Tombol Edit -->
+                    <a href="{% url 'edit_pegawai' pegawai.id %}" class="btn btn-warning btn-sm">Edit</a>
+                    
+                    <!-- Tombol Hapus -->
+                    <form action="{% url 'delete_pegawai' pegawai.id %}" method="post" style="display:inline-block;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus pegawai ini?');">Hapus</button>
+                    </form>
+                </td>
+                {% comment %} <td>
+                    <a href="{% url 'edit_pegawai' pegawai.id %}" class="btn btn-warning btn-sm">Edit</a>
+                    <a href="{% url 'delete_pegawai' pegawai.id %}" delete="post" style="display:inline-bloc">Hapus</a>
+                </td> {% endcomment %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

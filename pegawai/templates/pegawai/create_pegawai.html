@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block title %}Tambah Pegawai{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="my-4">Tambah Pegawai</h1>
+    <form method="post" class="needs-validation" novalidate>
+        {% csrf_token %}
+        
+        <!-- Iterasi melalui semua field dalam form -->
+        {% for field in form %}
+        <div class="form-group">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}  <!-- This renders the input field -->
+            <!-- Menampilkan pesan error di bawah field -->
+            {% if field.errors %}
+            <div class="invalid-feedback">
+                {% for error in field.errors %}
+                    {{ error }}
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+        
+        <!-- Tombol Simpan -->
+        <button type="submit" class="btn btn-primary">Simpan</button>
+        <!-- Tombol Batal -->
+        <a href="{% url 'list_pegawai' %}" class="btn btn-secondary">Batal</a>
+    </form>
+
+    <!-- Notifikasi global jika ada error -->
+    {% if form.non_field_errors %}
+    <div class="alert alert-danger mt-3">
+        <ul>
+            {% for error in form.non_field_errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    <!-- Notifikasi sukses menggunakan Django messages -->
+    {% if messages %}
+        <div class="alert alert-success mt-3">
+            <ul>
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+</div>
+
+<script>
+    // Validasi form agar terlihat lebih interaktif
+    (function () {
+        'use strict';
+        window.addEventListener('load', function () {
+            const forms = document.getElementsByClassName('needs-validation');
+            Array.prototype.filter.call(forms, function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (form.checkValidity() === false) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        }, false);
+    })();
+
+    // Menampilkan pop-up setelah form disubmit dan data berhasil disimpan
+    {% if messages %}
+    <script type="text/javascript">
+        window.onload = function() {
+            // Cek apakah ada pesan sukses dari Django messages
+            alert("Pegawai berhasil ditambahkan!");
+        }
+    </script>
+    {% endif %}
+</script>
+
+{% endblock %}
